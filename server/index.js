@@ -8,8 +8,12 @@ const API = "https://dog.ceo/api/breeds"
 
 app.get("/random", (req, res, next) => { 
   axios.get(API + "/image/random")
-   //parse response and add breed to the return
-  .then(response => res.json(response.data))
+  .then(response => {
+    var partsURL = response.data.message.split("/");
+    var breedObject = {breed: partsURL[partsURL.length -2]}
+    var object = { ...response.data, ...breedObject }
+    res.json(object)
+  })
   .catch(err => next(err));
 });
 
