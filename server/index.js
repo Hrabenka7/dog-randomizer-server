@@ -17,11 +17,29 @@ app.get("/random", (req, res, next) => {
   .catch(err => next(err));
 });
 
-
-app.get("/api", (req, res) => {
-    res.json({ message: "Hello from server!" });
+app.get("/allBreeds", (req, res, next) => {
+  axios.get(API + "/list/all")
+  .then(response => {
+    var formattedMessageData = formatBreedData(response.data.message);
+    res.json(formattedMessageData)
   })
+  .catch(err => next(err));
+});
   
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
+
+function formatBreedData(apiResponseData)
+{  
+  var breedData = [];
+  for (var breedName in apiResponseData) {
+    var subBreeds = apiResponseData[breedName];
+    breedData.push ({
+      "breedName": breedName,
+      "subBreeds": subBreeds
+    });
+  }
+  return breedData;
+
+}
