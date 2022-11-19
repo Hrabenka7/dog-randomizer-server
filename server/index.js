@@ -26,6 +26,18 @@ app.get("/allBreeds", (req, res, next) => {
   .catch(err => next(err));
 });
   
+app.get("/breed/param", (req, res, next) => {
+  var breed = req.query.breed; 
+  axios.get(`https://dog.ceo/api/breed/${breed}/images/random`)
+  .then(response => {
+    var breedObject = {breed: breed}
+    var object = { ...response.data, ...breedObject }
+    res.json(object)
+  })
+  .catch(err => next(err));
+});
+
+
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
