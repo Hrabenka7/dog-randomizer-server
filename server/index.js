@@ -31,22 +31,59 @@ app.get("/allBreeds", (req, res, next) => {
 });
   
 app.get("/breed/param", (req, res, next) => {
-  var breed = req.query.breed; 
-  axios.get(`https://dog.ceo/api/breed/${breed}/images/random`)
-  .then(response => {
-    var partsURL = response.data.message.split("/");
-    var breedObject = {breed: breed}
-    var imageNameObject = {imageName: partsURL[partsURL.length -1]}
-    var object = { ...response.data, ...breedObject, ...imageNameObject }
-    res.json(object)
-  })
-  .catch(err => next(err));
-});
+  var breed = req.query.breed;
+  var subBreed = req.query.subBread;
+  console.log('subBreed', subBreed);
 
+  if(subBreed) {
+    axios.get(`https://dog.ceo/api/breed/${breed}/${subBreed}/images/random`)
+    .then(response => {
+      var formattedResponse = formatParamsResponse(response)
+      res.json(formattedResponse)
+    })
+    .catch(err => next(err));
+  }
+  else if (breed) {
+    axios.get(`https://dog.ceo/api/breed/${breed}/images/random`)
+    .then(response => {
+      var formattedResponse = formatParamsResponse(response)
+      res.json(formattedResponse)
+    })
+    .catch(err => next(err));
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
+
+
+function getRandomBreedImage(breed) {
+ 
+}
+
+/* function getRandomSubBreadImage(){
+  axios.get(`https://dog.ceo/api/breed/${breed}/${subBreed}/images/random`)
+    .then(response => {
+      var partsURL = response.data.message.split("/");
+      var breedObject = {breed: breed}
+      var imageNameObject = {imageName: partsURL[partsURL.length -1]}
+      var object = { ...response.data, ...breedObject, ...imageNameObject }
+      res.json(object)
+    })
+    .catch(err => next(err));
+  }
+} */
+
+
+function formatParamsResponse(response) {
+  var partsURL = response.data.message.split("/");
+  var breed = {breed: breed}
+  var imageName = {imageName: partsURL[partsURL.length -1]}
+  var formattedResponse = { ...response.data, ...breed, ...imageName }
+  return formattedResponse;
+}
+
 
 function formatBreedData(apiResponseData)
 {  
