@@ -9,9 +9,13 @@ const API = "https://dog.ceo/api/breeds"
 app.get("/random", (req, res, next) => { 
   axios.get(API + "/image/random")
   .then(response => {
+    // Enable line below to test favorite
+    // response.data.message = "https://images.dog.ceo/breeds/newfoundland/n02111277_6891.jpg";
+    
     var partsURL = response.data.message.split("/");
     var breedObject = {breed: partsURL[partsURL.length -2]}
-    var object = { ...response.data, ...breedObject }
+    var imageNameObject = {imageName: partsURL[partsURL.length -1]}
+    var object = { ...response.data, ...breedObject, ...imageNameObject }
     res.json(object)
   })
   .catch(err => next(err));
@@ -30,8 +34,10 @@ app.get("/breed/param", (req, res, next) => {
   var breed = req.query.breed; 
   axios.get(`https://dog.ceo/api/breed/${breed}/images/random`)
   .then(response => {
+    var partsURL = response.data.message.split("/");
     var breedObject = {breed: breed}
-    var object = { ...response.data, ...breedObject }
+    var imageNameObject = {imageName: partsURL[partsURL.length -1]}
+    var object = { ...response.data, ...breedObject, ...imageNameObject }
     res.json(object)
   })
   .catch(err => next(err));
