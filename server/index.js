@@ -1,5 +1,6 @@
 const express = require("express");
 const axios = require("axios");
+const helper = require("./helper");
 
 const PORT = process.env.PORT || 3001;
 
@@ -24,7 +25,7 @@ app.get("/random", (req, res, next) => {
 app.get("/allBreeds", (req, res, next) => {
   axios.get(API + "/list/all")
   .then(response => {
-    var formattedMessageData = formatBreedData(response.data.message);
+    var formattedMessageData = helper.formatBreedData(response.data.message);
     res.json(formattedMessageData)
   })
   .catch(err => next(err));
@@ -33,12 +34,11 @@ app.get("/allBreeds", (req, res, next) => {
 app.get("/breed/param", (req, res, next) => {
   var breed = req.query.breed;
   var subBreed = req.query.subBread;
-  console.log('subBreed', subBreed);
 
   if(subBreed) {
     axios.get(`https://dog.ceo/api/breed/${breed}/${subBreed}/images/random`)
     .then(response => {
-      var formattedResponse = formatParamsResponse(response)
+      var formattedResponse = helper.formatParamsResponse(response)
       res.json(formattedResponse)
     })
     .catch(err => next(err));
@@ -46,7 +46,7 @@ app.get("/breed/param", (req, res, next) => {
   else if (breed) {
     axios.get(`https://dog.ceo/api/breed/${breed}/images/random`)
     .then(response => {
-      var formattedResponse = formatParamsResponse(response)
+      var formattedResponse = helper.formatParamsResponse(response)
       res.json(formattedResponse)
     })
     .catch(err => next(err));
@@ -58,25 +58,8 @@ app.listen(PORT, () => {
 });
 
 
-function getRandomBreedImage(breed) {
- 
-}
 
-/* function getRandomSubBreadImage(){
-  axios.get(`https://dog.ceo/api/breed/${breed}/${subBreed}/images/random`)
-    .then(response => {
-      var partsURL = response.data.message.split("/");
-      var breedObject = {breed: breed}
-      var imageNameObject = {imageName: partsURL[partsURL.length -1]}
-      var object = { ...response.data, ...breedObject, ...imageNameObject }
-      res.json(object)
-    })
-    .catch(err => next(err));
-  }
-} */
-
-
-function formatParamsResponse(response) {
+/* function formatParamsResponse(response) {
   var partsURL = response.data.message.split("/");
   var breed = {breed: breed}
   var imageName = {imageName: partsURL[partsURL.length -1]}
@@ -97,4 +80,4 @@ function formatBreedData(apiResponseData)
   }
   return breedData;
 
-}
+} */
